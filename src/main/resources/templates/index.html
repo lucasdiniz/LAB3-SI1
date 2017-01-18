@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>LAB03</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.css"/>
+        <link rel="stylesheet" href="mainStyle.css"/>
+
+
+        <script src="https://use.fontawesome.com/592690451c.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-route.js"></script>
+        <script src="app.js"></script>
+
+        <!-- Angular Material requires Angular.js Libraries -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-aria.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
+
+        <!-- Angular Material Library -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.js"></script>
+
+
+    </head>
+
+    <body>
+
+        <div class="container-fluid">
+            <div class="jumbotron text-center">
+                <h1>TODO List</h1>
+                <p>Estabeleça metas e se organize.</p>
+            </div>
+        </div>
+
+        <div data-ng-app="myApp" data-ng-controller="indexController" class="container-fluid">
+
+            <form class="form-group">
+                <div class="row">
+                    <div class="col-md-7 col-md-offset-2">
+                        <input data-ng-model="newTodo" type="text" class="form-control" id="inputTodo" placeholder="Add a new TODO..."/>
+                    </div>
+                    <div class="col-md-2">
+                        <button data-ng-click="addTodo(newTodo)" type="submit" class="btn btn-success">GO</button>
+                    </div>
+                </div>
+            </form>
+
+
+
+            <div data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0" class="row">
+                <div class="col-xs-4">
+
+                    <md-card md-theme="dark-blue">
+                        <md-card-header>
+                            <md-card-header-text>
+                                <p data-ng-if="!todos[$index].done">
+                                    {{todos[$index].name}}
+                                </p>
+                                <p data-ng-if="todos[$index].done">
+                                    <del>{{todos[$index].name}}</del>
+                                </p>
+                            </md-card-header-text>
+                        </md-card-header>
+
+                        <md-card-content>
+                        </md-card-content>
+
+                        <md-card-actions layout="row" layout-align="start center">
+                            <md-switch data-ng-model="todos[$index].done" aria-label="Switch 1">
+                                Switch 1: {{ todos[$index].done }}
+                            </md-switch>
+                        </md-card-actions>
+                    </md-card>
+
+                </div>
+                <div class="col-xs-4" ng-if="todos.length > ($index + 1)">
+
+                    <md-card md-theme="dark-orange">
+                        <md-card-header>
+                            <md-card-header-text>
+                                <p data-ng-if="!todos[$index + 1].done">
+                                    {{todos[$index + 1].name}}
+                                </p>
+                                <p data-ng-if="todos[$index + 1].done">
+                                    <del>{{todos[$index + 1].name}}</del>
+                                </p>
+                            </md-card-header-text>
+                        </md-card-header>
+
+                        <md-card-content>
+                        </md-card-content>
+
+                        <md-card-actions layout="row" layout-align="start center">
+                            <md-switch data-ng-model="todos[$index + 1].done" aria-label="Switch 1">
+                                Switch 1: {{ todos[$index + 1].done }}
+                            </md-switch>
+                        </md-card-actions>
+                    </md-card>
+
+                </div>
+                <div class="col-xs-4" ng-if="todos.length > ($index + 2)">
+
+                    <md-card md-theme="dark-purple">
+                        <md-card-header>
+                            <md-card-header-text>
+                                <p data-ng-if="!todos[$index + 2].done">
+                                    {{todos[$index + 2].name}}
+                                </p>
+                                <p data-ng-if="todos[$index + 2].done">
+                                    <del>{{todos[$index + 2].name}}</del>
+                                </p>
+                            </md-card-header-text>
+                        </md-card-header>
+
+                        <md-card-content>
+                        </md-card-content>
+
+                        <md-card-actions layout="row" layout-align="start center">
+                            <md-switch data-ng-model="todos[$index + 2].done" aria-label="Switch 1">
+                                Switch 1: {{ todos[$index + 2].done }}
+                            </md-switch>
+                        </md-card-actions>
+                    </md-card>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </body>
+</html>
