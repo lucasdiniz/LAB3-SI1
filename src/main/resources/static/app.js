@@ -1,28 +1,48 @@
 /**
  * Created by lucasdiniz on 17/01/17.
  */
-var app = angular.module('myApp', ['ngMaterial']);
+var app = angular.module('myApp', ['ngMaterial', 'ngMdIcons']);
 
 app.controller('indexController', function($scope){
 
     var self = this;
 
+    $scope.hideSearchBar = true;
+    $scope.hideAddTodoBar = true;
+
     $scope.todos = [];
 
-    $scope.addTodo = function(todo){
+    $scope.toggleSearchBar = function () {
+        $scope.hideAddTodoBar = true;
+        $scope.hideSearchBar = !$scope.hideSearchBar;
+    };
 
-        $scope.todos.push(new self.todoObj(todo));
+    $scope.toggleAddTodoBar = function () {
+        $scope.hideSearchBar = true;
+        $scope.hideAddTodoBar = !$scope.hideAddTodoBar;
+    };
+
+
+    $scope.addTodo = function(name){
+
+        $scope.todos.push(new self.todoObj(name));
         self.clearInput();
     };
+
 
     self.clearInput = function () {
         $scope.newTodo = "";
     };
 
 
-    self.todoObj = function (todo) {
+    self.todoObj = function (name) {
+        this.title = "TODO List " + $scope.todos.length;
+        this.tasks = [new self.taskObj(name)];
+    };
+
+    self.taskObj = function (name) {
+        this.name = name;
         this.done = false;
-        this.name = todo;
     };
 
     self.clear = function (array) {
@@ -30,33 +50,6 @@ app.controller('indexController', function($scope){
             array.pop();
         }
     };
-
-    self.chunk = function() {
-        var numCols = 3;
-        var cont = 0;
-        var newArr = [];
-        var aux = [];
-        for (var i=0; i < $scope.todos.length; i+=1) {
-
-            aux.push($scope.todos);
-            cont += 1;
-
-            if(cont === 3 || i === $scope.todos.length - 1){
-                newArr.push(aux);
-                self.clear(aux);
-                cont = 0;
-            }
-
-        }
-        console.log(newArr);
-        return newArr;
-    }
-
-    $scope.getChunkedData = function() {
-        return self.chunk();
-    };
-
-
 
 }).config(function($mdThemingProvider) {
     $mdThemingProvider.theme('dark-grey').backgroundPalette('grey').dark();

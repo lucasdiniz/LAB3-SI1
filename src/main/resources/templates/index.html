@@ -15,6 +15,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-route.js"></script>
         <script src="app.js"></script>
+        <script src="todoController.js"></script>
+        <script src="modalController.js"></script>
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
@@ -24,111 +26,216 @@
         <!-- Angular Material Library -->
         <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.js"></script>
 
+        <!-- Angular Material Icons -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script>
+
 
     </head>
 
-    <body>
+    <body style="padding-top: 170px" data-ng-app="myApp" data-ng-controller="indexController" >
+        <nav class="navbar navbar-default navbar-fixed-top text-center">
 
-        <div class="container-fluid">
-            <div class="jumbotron text-center">
-                <h1>TODO List</h1>
-                <p>Estabeleça metas e se organize.</p>
-            </div>
-        </div>
+            <h1>TODO List</h1>
+            <p>Estabeleça metas e se organize.</p>
 
-        <div data-ng-app="myApp" data-ng-controller="indexController" class="container-fluid">
+            <md-button data-ng-click="toggleAddTodoBar()">
+                <ng-md-icon icon="playlist_add" style="fill: aqua"></ng-md-icon>
+            </md-button>
 
-            <form class="form-group">
-                <div class="row">
-                    <div class="col-md-7 col-md-offset-2">
+            <md-button data-ng-click="toggleSearchBar()">
+                <ng-md-icon icon="search" style="fill: aqua"></ng-md-icon>
+            </md-button>
+
+            <form class="form-group" data-ng-hide="hideAddTodoBar">
+                <div layout="row" layout-align="space-around center">
+                    <div class="col-md-9">
                         <input data-ng-model="newTodo" type="text" class="form-control" id="inputTodo" placeholder="Add a new TODO..."/>
                     </div>
-                    <div class="col-md-2">
-                        <button data-ng-click="addTodo(newTodo)" type="submit" class="btn btn-success">GO</button>
+                    <div>
+                        <md-button data-ng-click="addTodo(newTodo)" type="submit" class="md-primary md-raised">GO</md-button>
                     </div>
                 </div>
             </form>
 
-
-
-            <div data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0" class="row">
-                <div class="col-xs-4">
-
-                    <md-card md-theme="dark-blue">
-                        <md-card-header>
-                            <md-card-header-text>
-                                <p data-ng-if="!todos[$index].done">
-                                    {{todos[$index].name}}
-                                </p>
-                                <p data-ng-if="todos[$index].done">
-                                    <del>{{todos[$index].name}}</del>
-                                </p>
-                            </md-card-header-text>
-                        </md-card-header>
-
-                        <md-card-content>
-                        </md-card-content>
-
-                        <md-card-actions layout="row" layout-align="start center">
-                            <md-switch data-ng-model="todos[$index].done" aria-label="Switch 1">
-                                Switch 1: {{ todos[$index].done }}
-                            </md-switch>
-                        </md-card-actions>
-                    </md-card>
-
+            <form class="form-group" data-ng-hide="hideSearchBar">
+                <div layout="row" layout-align="space-around center">
+                    <div class="col-md-9">
+                        <input data-ng-model="searchString" type="text" class="form-control" id="inputSearch" placeholder="Search Anything..."/>
+                    </div>
+                    <div>
+                        <md-button data-ng-click="addTodo(newTodo)" type="submit" class="md-primary md-raised">GO</md-button>
+                    </div>
                 </div>
-                <div class="col-xs-4" ng-if="todos.length > ($index + 1)">
+            </form>
 
-                    <md-card md-theme="dark-orange">
-                        <md-card-header>
-                            <md-card-header-text>
-                                <p data-ng-if="!todos[$index + 1].done">
-                                    {{todos[$index + 1].name}}
-                                </p>
-                                <p data-ng-if="todos[$index + 1].done">
-                                    <del>{{todos[$index + 1].name}}</del>
-                                </p>
-                            </md-card-header-text>
-                        </md-card-header>
+        </nav>
 
-                        <md-card-content>
-                        </md-card-content>
+        <div class="container-fluid">
 
-                        <md-card-actions layout="row" layout-align="start center">
-                            <md-switch data-ng-model="todos[$index + 1].done" aria-label="Switch 1">
-                                Switch 1: {{ todos[$index + 1].done }}
-                            </md-switch>
-                        </md-card-actions>
-                    </md-card>
+            <md-content>
 
+                <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0">
+                    <div class="col-md-4">
+
+                        <md-card>
+                            <md-card-header>
+                                <md-card-header-text class="text-center">
+                                    {{todos[$index].title}}
+                                </md-card-header-text>
+                            </md-card-header>
+
+                            <md-card-content>
+                                <div>
+                                    <div class="row">
+                                        <md-checkbox aria-label="Select All"
+                                                     data-ng-checked="allChecked(todos[$index])"
+                                                     md-indeterminate="isIndeterminated(todos[$index])"
+                                                     data-ng-click="toggleAll(todos[$index])">
+                                            <span data-ng-if="allChecked(todos[$index])">Un-</span>Select All
+                                        </md-checkbox>
+                                    </div>
+                                    <div class="row"
+                                         data-ng-repeat="task in todos[$index].tasks"
+                                         layout="row"
+                                         layout-align="space-around center">
+                                        
+                                        <div  class="col-md-8">
+                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
+                                                {{ task.name }}
+                                            </md-checkbox>
+                                        </div>
+                                        <div>
+                                            <md-button data-ng-click="removeTask(todos[$index], task)">
+                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-card-content>
+
+                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
+                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index])">Mudar título</md-button>
+                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index])">Add TODO</md-button>
+                            </md-card-actions>
+
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index])}}%">
+                                    {{percentageDone(todos[$index]).toFixed(2)}}%
+                                </div>
+                            </div>
+
+                        </md-card>
+
+                    </div>
+                    <div class="col-md-4" data-ng-if="todos.length > ($index + 1)">
+
+                        <md-card>
+                            <md-card-header>
+                                <md-card-header-text class="text-center">
+                                    {{todos[$index + 1].title}}
+                                </md-card-header-text>
+                            </md-card-header>
+
+                            <md-card-content>
+                                <div>
+                                    <div class="row">
+                                        <md-checkbox aria-label="Select All"
+                                                     data-ng-checked="allChecked(todos[$index + 1])"
+                                                     md-indeterminate="isIndeterminated(todos[$index + 1])"
+                                                     data-ng-click="toggleAll(todos[$index + 1])">
+                                            <span data-ng-if="allChecked(todos[$index + 1])">Un-</span>Select All
+                                        </md-checkbox>
+                                    </div>
+                                    <div class="row"
+                                         data-ng-repeat="task in todos[$index + 1].tasks"
+                                         layout="row"
+                                         layout-align="space-around center">
+
+                                        <div>
+                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
+                                                {{ task.name }}
+                                            </md-checkbox>
+                                        </div>
+                                        <div>
+                                            <md-button data-ng-click="removeTask(todos[$index + 1], task)">
+                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-card-content>
+
+                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
+                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index + 1])">Mudar título</md-button>
+                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index + 1])">Add TODO</md-button>
+                            </md-card-actions>
+
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index + 1])}}%">
+                                    {{percentageDone(todos[$index + 1]).toFixed(2)}}%
+                                </div>
+                            </div>
+
+                        </md-card>
+
+                    </div>
+                    <div class="col-md-4" data-ng-if="todos.length > ($index + 2)">
+
+                        <md-card>
+                            <md-card-header>
+                                <md-card-header-text class="text-center">
+                                    {{todos[$index + 2].title}}
+                                </md-card-header-text>
+                            </md-card-header>
+
+                            <md-card-content>
+                                <div>
+                                    <div class="row">
+                                        <md-checkbox aria-label="Select All"
+                                                     data-ng-checked="allChecked(todos[$index + 2])"
+                                                     md-indeterminate="isIndeterminated(todos[$index + 2])"
+                                                     data-ng-click="toggleAll(todos[$index + 2])">
+                                            <span data-ng-if="allChecked(todos[$index + 2])">Un-</span>Select All
+                                        </md-checkbox>
+                                    </div>
+                                    <div class="row"
+                                         data-ng-repeat="task in todos[$index + 2].tasks"
+                                         layout="row"
+                                         layout-align="space-around center">
+
+                                        <div>
+                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
+                                                {{ task.name }}
+                                            </md-checkbox>
+                                        </div>
+                                        <div>
+                                            <md-button data-ng-click="removeTask(todos[$index + 2], task)">
+                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-card-content>
+
+                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
+                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index + 2])">Mudar título</md-button>
+                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index + 2])">Add TODO</md-button>
+                            </md-card-actions>
+
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index + 2])}}%">
+                                    {{percentageDone(todos[$index + 2]).toFixed(2)}}%
+                                </div>
+                            </div>
+
+                        </md-card>
+
+                    </div>
                 </div>
-                <div class="col-xs-4" ng-if="todos.length > ($index + 2)">
-
-                    <md-card md-theme="dark-purple">
-                        <md-card-header>
-                            <md-card-header-text>
-                                <p data-ng-if="!todos[$index + 2].done">
-                                    {{todos[$index + 2].name}}
-                                </p>
-                                <p data-ng-if="todos[$index + 2].done">
-                                    <del>{{todos[$index + 2].name}}</del>
-                                </p>
-                            </md-card-header-text>
-                        </md-card-header>
-
-                        <md-card-content>
-                        </md-card-content>
-
-                        <md-card-actions layout="row" layout-align="start center">
-                            <md-switch data-ng-model="todos[$index + 2].done" aria-label="Switch 1">
-                                Switch 1: {{ todos[$index + 2].done }}
-                            </md-switch>
-                        </md-card-actions>
-                    </md-card>
-
-                </div>
-            </div>
-
+            </md-content>
 
         </div>
 
