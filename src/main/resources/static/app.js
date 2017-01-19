@@ -31,6 +31,7 @@ app.controller('indexController', function($scope){
     $scope.addTodo = function(name){
 
         $scope.todos.push(new self.todoObj(name));
+        $scope.hideAddTodoBar = true;
         self.clearInput();
     };
 

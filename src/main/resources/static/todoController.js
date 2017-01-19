@@ -13,6 +13,7 @@ app.controller('todoController', function($scope, $rootScope){
 
     $rootScope.$on("AddTask", function (event, data) {
         data._todo.tasks.push(new self.taskObj(data._taskName));
+        console.log('new task added to ' + data._todo.title);
     });
 
     $scope.allChecked = function(todo) {

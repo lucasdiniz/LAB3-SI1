@@ -109,7 +109,7 @@
                                             </md-checkbox>
                                         </div>
                                         <div>
-                                            <md-button data-ng-click="removeTask(todos[$index], task)" aria-label="removeTask">
+                                            <md-button data-ng-click="removeTask(todos[$parent.$index], task)" aria-label="removeTask">
                                                 <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
                                             </md-button>
                                         </div>
@@ -164,7 +164,7 @@
                                             </md-checkbox>
                                         </div>
                                         <div>
-                                            <md-button data-ng-click="removeTask(todos[$index + 1], task)" aria-label="removeTask">
+                                            <md-button data-ng-click="removeTask(todos[$parent.$index + 1], task)" aria-label="removeTask">
                                                 <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
                                             </md-button>
                                         </div>
@@ -219,7 +219,7 @@
                                             </md-checkbox>
                                         </div>
                                         <div>
-                                            <md-button data-ng-click="removeTask(todos[$index + 2], task)" aria-label="removeTask">
+                                            <md-button data-ng-click="removeTask(todos[$parent.$index + 2], task)" aria-label="removeTask">
                                                 <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
                                             </md-button>
                                         </div>

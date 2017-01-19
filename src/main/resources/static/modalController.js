@@ -27,8 +27,8 @@ app.controller('modalController', function ($scope, $mdDialog, $rootScope) {
     $scope.addTodoModal = function(ev, todo) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.prompt()
-            .title('Definao novo TODO')
-            .placeholder('Digite o TODO...')
+            .title('Defina a nova Task')
+            .placeholder('Lavar o carro...')
             .ariaLabel('')
             .initialValue('New Todo')
             .targetEvent(ev)
@@ -36,7 +36,7 @@ app.controller('modalController', function ($scope, $mdDialog, $rootScope) {
             .cancel('Cancelar');
 
         $mdDialog.show(confirm).then(function(result) {
-            $rootScope.$emit("AddTask", {
+            $rootScope.$broadcast("AddTask", {
                 _taskName: result,
                 _todo: todo
             });
