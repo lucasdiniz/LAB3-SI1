@@ -98,8 +98,8 @@
                                          data-ng-repeat="task in todos[$index].tasks"
                                          layout="row"
                                          layout-align="space-around center">
-                                        
-                                        <div  class="col-md-8">
+
+                                        <div class="col-md-10">
                                             <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
                                                 {{ task.name }}
                                             </md-checkbox>
@@ -152,7 +152,7 @@
                                          layout="row"
                                          layout-align="space-around center">
 
-                                        <div>
+                                        <div class="col-md-10">
                                             <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
                                                 {{ task.name }}
                                             </md-checkbox>
@@ -205,7 +205,7 @@
                                          layout="row"
                                          layout-align="space-around center">
 
-                                        <div>
+                                        <div class="col-md-10">
                                             <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
                                                 {{ task.name }}
                                             </md-checkbox>
@@ -236,8 +236,6 @@
                     </div>
                 </div>
             </md-content>
-
         </div>
-
     </body>
 </html>

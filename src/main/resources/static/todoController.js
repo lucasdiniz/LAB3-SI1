@@ -44,8 +44,14 @@ app.controller('todoController', function($scope, $rootScope){
     };
 
     $scope.toggleAll = function (todo) {
+
+        var newValue = true;
+
+        if($scope.allChecked(todo)) newValue = false;
+        else newValue = true;
+
         todo.tasks.forEach(function (task) {
-           task.done = !task.done;
+           task.done = newValue;
         });
     };
 
