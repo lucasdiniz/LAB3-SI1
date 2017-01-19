@@ -12,6 +12,11 @@ app.controller('indexController', function($scope){
 
     $scope.todos = [];
 
+    $scope.removeTodo = function (todo) {
+        var index = $scope.todos.indexOf(todo);
+        $scope.todos.splice(index, 1);
+    };
+
     $scope.toggleSearchBar = function () {
         $scope.hideAddTodoBar = true;
         $scope.hideSearchBar = !$scope.hideSearchBar;
