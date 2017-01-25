@@ -2,7 +2,7 @@
  * Created by lucasdiniz on 18/01/17.
  */
 
-app.controller('todoController', function($scope, $rootScope){
+app.controller('todoController', function($scope, $rootScope, $http){
 
     var self = this;
 
@@ -10,6 +10,31 @@ app.controller('todoController', function($scope, $rootScope){
         this.name = name;
         this.done = false;
     };
+
+    $scope.submit = function() {
+
+        var testJson = new Object();
+        testJson.title = "teste";
+        testJson.tasks = new Array();
+        testJson.tasks.push(new taskObj("kkkkk"));
+        testJson.tasks.push(new taskObj("hueauhe"));
+        testJson.tasks.push(new taskObj("hihhihii"));
+        $http({
+            method: 'POST',
+            url: '/todos/save',
+            data: testJson
+        }).success(function (data) {
+            console.log(" foi");
+        }).error(function (data, status) {
+
+            if (status === 400)
+                console.log("error 400");
+            else if (status === 409)
+                console.log("error 409");
+        });
+
+    };
+
 
     $rootScope.$on("AddTask", function (event, data) {
         data._todo.tasks.push(new self.taskObj(data._taskName));
