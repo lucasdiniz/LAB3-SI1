@@ -17,6 +17,7 @@ public class Todo{
     @Column
     private String title;
     @Column
+    @OneToMany(mappedBy="todo", targetEntity = Task.class, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
     protected Todo() {}
@@ -24,6 +25,10 @@ public class Todo{
     public Todo(String title, List<Task> tasks) {
         this.tasks = tasks;
         this.title = title;
+    }
+
+    public String getTitle(){
+        return this.title;
     }
 
     @Override

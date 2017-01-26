@@ -8,6 +8,8 @@ import javax.persistence.Id;
 /**
  * Created by lucas on 25/01/2017.
  */
+
+@Entity
 public class Task {
 
     private String name;

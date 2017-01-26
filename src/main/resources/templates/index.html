@@ -77,6 +77,8 @@
                 <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0">
                     <div class="col-md-4">
 
+                        <md-button data-ng-click="submit()"></md-button>
+
                         <md-card>
                             <md-card-header>
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ufcg.si1.entities.Todo;
 import ufcg.si1.repository.TodoDB;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,13 +19,12 @@ import java.util.List;
 @RequestMapping(value = "/todos")
 public class TodoController {
 
-
+    @Autowired
     private TodoDB todoDb;
 
-    @Autowired
-    public TodoController(TodoDB todoDb){
-        this.todoDb = todoDb;
-    }
+//    public TodoController(TodoDB todoDb){
+//        this.todoDb = todoDb;
+//    }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Todo> getAll(){
@@ -33,8 +33,10 @@ public class TodoController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public List<Todo> create(@RequestBody Todo todo){
-        todoDb.save(todo);
-        return todoDb.findAll();
+        System.out.println("chegou aqui: " + todo.getTitle());
+//        todoDb.save(todo);
+//        return todoDb.findAll();
+        return new ArrayList<Todo>();
     }
 
 }
