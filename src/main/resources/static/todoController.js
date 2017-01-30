@@ -11,34 +11,44 @@ app.controller('todoController', function($scope, $rootScope, $http){
         this.done = false;
     };
 
-    $scope.submit = function() {
+    $scope.save = function(todo) {
 
-        var testJson = new Object();
-        testJson.title = "teste";
-        testJson.tasks = new Array();
-        testJson.tasks.push(new taskObj("kkkkk"));
-        testJson.tasks.push(new taskObj("hueauhe"));
-        testJson.tasks.push(new taskObj("hihhihii"));
         $http({
             method: 'POST',
             url: '/todos/save',
-            data: testJson
-        }).success(function (data) {
-            console.log(" foi");
-        }).error(function (data, status) {
-
-            if (status === 400)
-                console.log("error 400");
-            else if (status === 409)
-                console.log("error 409");
+            data: todo
+        }).then(function (data) {
+            console.log("foi!");
         });
 
     };
 
+    $scope.saveAll = function(todos) {
+
+        $http({
+            method: 'POST',
+            url: '/todos/saveAll',
+            data: todos
+        }).then(function (data) {
+            console.log("foi!");
+        });
+
+    };
+
+    $rootScope.$on("saveAll", function (event, data) {
+        $scope.saveAll(data._todos);
+    });
+
+
+    $rootScope.$on("save", function (event, data) {
+        $scope.save(data._todo);
+    });
+    
 
     $rootScope.$on("AddTask", function (event, data) {
         data._todo.tasks.push(new self.taskObj(data._taskName));
         console.log('new task added to ' + data._todo.title);
+        $scope.save(data._todo);
     });
 
     $scope.allChecked = function(todo) {
@@ -46,6 +56,8 @@ app.controller('todoController', function($scope, $rootScope, $http){
         todo.tasks.forEach(function (task) {
            if(!task.done) allDone = false;
         });
+
+        $scope.save(todo);
         return allDone;
     };
 
@@ -56,11 +68,13 @@ app.controller('todoController', function($scope, $rootScope, $http){
     $scope.removeTask = function (todo, task) {
         var index = todo.tasks.indexOf(task);
         todo.tasks.splice(index, 1);
+        $scope.save(todo);
     };
 
 
     $scope.toggle = function (task) {
         task.done = !task.done;
+        $scope.save(todo);
     };
     
     $scope.isIndeterminated = function (todo) {
@@ -79,6 +93,8 @@ app.controller('todoController', function($scope, $rootScope, $http){
         todo.tasks.forEach(function (task) {
            task.done = newValue;
         });
+
+        $scope.save(todo);
     };
 
     $scope.percentageDone = function (todo) {

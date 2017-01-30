@@ -19,6 +19,11 @@ app.controller('modalController', function ($scope, $mdDialog, $rootScope) {
 
         $mdDialog.show(confirm).then(function(result) {
             todo.title = result;
+
+            $rootScope.$broadcast("save", {
+                _todo: todo
+            });
+
         }, function() {
             // $scope.status = 'O título não foi alterado';
         });

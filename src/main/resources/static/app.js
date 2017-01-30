@@ -3,7 +3,7 @@
  */
 var app = angular.module('myApp', ['ngMaterial', 'ngMdIcons']);
 
-app.controller('indexController', function($scope){
+app.controller('indexController', function($scope, $http){
 
     var self = this;
 
@@ -12,9 +12,28 @@ app.controller('indexController', function($scope){
 
     $scope.todos = [];
 
+    $scope.populate = function () {
+        $http({
+            method: 'GET',
+            url: '/todos/all'
+        }).then(function (_data) {
+            
+            if(_data.data.length != 0) {
+                todos = _data;
+            }
+
+            console.log("foi! " + JSON.stringify(_data));
+        });
+    };
+
     $scope.removeTodo = function (todo) {
         var index = $scope.todos.indexOf(todo);
         $scope.todos.splice(index, 1);
+
+        $rootScope.$broadcast("saveAll", {
+            _todo: todo
+        });
+
     };
 
     $scope.toggleSearchBar = function () {
@@ -33,6 +52,10 @@ app.controller('indexController', function($scope){
         $scope.todos.push(new self.todoObj(name));
         $scope.hideAddTodoBar = true;
         self.clearInput();
+        $rootScope.$broadcast("saveAll", {
+            _todos: todos
+        });
+
     };
 
 

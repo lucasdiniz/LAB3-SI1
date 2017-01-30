@@ -1,6 +1,7 @@
 package ufcg.si1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,21 +23,21 @@ public class TodoController {
     @Autowired
     private TodoDB todoDb;
 
-//    public TodoController(TodoDB todoDb){
-//        this.todoDb = todoDb;
-//    }
-
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Todo> getAll(){
         return todoDb.findAll();
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public List<Todo> create(@RequestBody Todo todo){
+    public void create(@RequestBody Todo todo){
         System.out.println("chegou aqui: " + todo.getTitle());
-//        todoDb.save(todo);
-//        return todoDb.findAll();
-        return new ArrayList<Todo>();
+        todoDb.save(todo);
+    }
+
+    @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
+    public void createTodos(@RequestBody List<Todo> todos){
+        System.out.println("chegou aqui: todos");
+        todoDb.save(todos);
     }
 
 }

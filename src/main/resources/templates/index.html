@@ -32,7 +32,7 @@
 
     </head>
 
-    <body style="padding-top: 170px" data-ng-app="myApp" data-ng-controller="indexController" >
+    <body style="padding-top: 170px" data-ng-app="myApp" data-ng-controller="indexController" data-ng-init="populate()">
         <nav class="navbar navbar-default navbar-fixed-top text-center">
 
             <h1>TODO List</h1>
@@ -76,8 +76,6 @@
 
                 <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0">
                     <div class="col-md-4">
-
-                        <md-button data-ng-click="submit()"></md-button>
 
                         <md-card>
                             <md-card-header>

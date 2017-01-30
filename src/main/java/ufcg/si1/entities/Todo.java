@@ -17,7 +17,7 @@ public class Todo{
     @Column
     private String title;
     @Column
-    @OneToMany(mappedBy="todo", targetEntity = Task.class, fetch = FetchType.LAZY)
+    @OneToMany
     private List<Task> tasks;
 
     protected Todo() {}

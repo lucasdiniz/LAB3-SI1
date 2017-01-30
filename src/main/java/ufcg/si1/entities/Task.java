@@ -1,9 +1,6 @@
 package ufcg.si1.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by lucas on 25/01/2017.
@@ -14,6 +11,10 @@ public class Task {
 
     private String name;
     private boolean done;
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private long id;
 
     protected Task(){}
 
