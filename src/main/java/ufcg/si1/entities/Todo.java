@@ -1,6 +1,7 @@
 package ufcg.si1.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,20 +17,24 @@ public class Todo{
     private Long id;
     @Column
     private String title;
+
+    @ElementCollection
     @Column
-    @OneToMany
+    @OneToMany(mappedBy="taskOwner")
     private List<Task> tasks;
 
     protected Todo() {}
 
     public Todo(String title, List<Task> tasks) {
-        this.tasks = tasks;
+        this.tasks = new ArrayList<>(tasks);
         this.title = title;
     }
 
     public String getTitle(){
         return this.title;
     }
+
+    public List<Task> getTasks(){return this.tasks;}
 
     @Override
     public String toString() {

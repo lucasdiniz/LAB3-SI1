@@ -1,14 +1,15 @@
 package ufcg.si1.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ufcg.si1.entities.Task;
 import ufcg.si1.entities.Todo;
 import ufcg.si1.repository.TodoDB;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class TodoController {
     private TodoDB todoDb;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<Todo> getAll(){
-        return todoDb.findAll();
+    public @ResponseBody List<Todo> getAll(){
+        List<Todo> ans = todoDb.findAll();
+        return ans;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -34,10 +36,23 @@ public class TodoController {
         todoDb.save(todo);
     }
 
-    @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
-    public void createTodos(@RequestBody List<Todo> todos){
-        System.out.println("chegou aqui: todos");
-        todoDb.save(todos);
+    @RequestMapping(value = "/save", method = RequestMethod.PATCH)
+    public void update(@RequestBody Todo todo){
+        System.out.println("chegou aqui: " + todo.getTitle());
+        todoDb.save(todo);
     }
+
+//    @RequestMapping(value = "/saveAll", method = RequestMethod.PATCH)
+//    public void createTodos(@RequestBody List<Todo> todos){
+//        System.out.println("chegou aqui: " + todos.toString());
+//        todoDb.save(todos);
+//    }
+//
+//    @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
+//    public void updateTodos(@RequestBody List<Todo> todos){
+//        System.out.println("chegou aqui: " + todos.toString());
+//        todoDb.save(todos);
+//    }
+
 
 }

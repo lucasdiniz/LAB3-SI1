@@ -3,7 +3,7 @@
  */
 var app = angular.module('myApp', ['ngMaterial', 'ngMdIcons']);
 
-app.controller('indexController', function($scope, $http){
+app.controller('indexController', function($scope, $http, $rootScope){
 
     var self = this;
 
@@ -17,12 +17,12 @@ app.controller('indexController', function($scope, $http){
             method: 'GET',
             url: '/todos/all'
         }).then(function (_data) {
-            
+
             if(_data.data.length != 0) {
-                todos = _data;
+                $scope.todos = _data.data;
             }
 
-            console.log("foi! " + JSON.stringify(_data));
+            console.log("View inicializada! " + JSON.stringify(_data));
         });
     };
 
@@ -53,7 +53,7 @@ app.controller('indexController', function($scope, $http){
         $scope.hideAddTodoBar = true;
         self.clearInput();
         $rootScope.$broadcast("saveAll", {
-            _todos: todos
+            _todos: $scope.todos
         });
 
     };

@@ -14,7 +14,7 @@ app.controller('todoController', function($scope, $rootScope, $http){
     $scope.save = function(todo) {
 
         $http({
-            method: 'POST',
+            method: 'PATCH',
             url: '/todos/save',
             data: todo
         }).then(function (data) {
@@ -26,7 +26,7 @@ app.controller('todoController', function($scope, $rootScope, $http){
     $scope.saveAll = function(todos) {
 
         $http({
-            method: 'POST',
+            method: 'PATCH',
             url: '/todos/saveAll',
             data: todos
         }).then(function (data) {
@@ -43,12 +43,23 @@ app.controller('todoController', function($scope, $rootScope, $http){
     $rootScope.$on("save", function (event, data) {
         $scope.save(data._todo);
     });
-    
+
+    $scope.savePost = function (todo) {
+        $http({
+            method: 'POST',
+            url: '/todos/save',
+            data: todo
+        }).then(function (data) {
+            console.log("foi!");
+        });
+    };
+
 
     $rootScope.$on("AddTask", function (event, data) {
         data._todo.tasks.push(new self.taskObj(data._taskName));
-        console.log('new task added to ' + data._todo.title);
-        $scope.save(data._todo);
+        console.log('new task added to ' + data._todo.title + " task name: " + data._taskName);
+
+        $scope.savePost(data._todo);
     });
 
     $scope.allChecked = function(todo) {
@@ -57,7 +68,7 @@ app.controller('todoController', function($scope, $rootScope, $http){
            if(!task.done) allDone = false;
         });
 
-        $scope.save(todo);
+        // $scope.save(todo);
         return allDone;
     };
 
@@ -74,7 +85,7 @@ app.controller('todoController', function($scope, $rootScope, $http){
 
     $scope.toggle = function (task) {
         task.done = !task.done;
-        $scope.save(todo);
+        // $scope.save(task);
     };
     
     $scope.isIndeterminated = function (todo) {
