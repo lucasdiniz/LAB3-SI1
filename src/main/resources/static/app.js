@@ -52,8 +52,8 @@ app.controller('indexController', function($scope, $http, $rootScope){
         $scope.todos.push(new self.todoObj(name));
         $scope.hideAddTodoBar = true;
         self.clearInput();
-        $rootScope.$broadcast("saveAll", {
-            _todos: $scope.todos
+        $rootScope.$broadcast("save", {
+            _todo: $scope.todos[$scope.todos.length - 1]
         });
 
     };

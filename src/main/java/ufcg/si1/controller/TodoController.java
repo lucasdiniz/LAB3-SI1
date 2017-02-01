@@ -27,19 +27,31 @@ public class TodoController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody List<Todo> getAll(){
         List<Todo> ans = todoDb.findAll();
+        System.out.println(ans);
         return ans;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public void create(@RequestBody Todo todo){
-        System.out.println("chegou aqui: " + todo.getTitle());
-        todoDb.save(todo);
+        System.out.println("chegou no POST do server: " + todo.getTitle());
+        System.out.println(todo.toString());
+//        for(Task t : todo.getTasks())
+            todoDb.save(todo);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.PATCH)
     public void update(@RequestBody Todo todo){
-        System.out.println("chegou aqui: " + todo.getTitle());
+        System.out.println("chegou no PATCH do server: " + todo.getTitle());
+        System.out.println(todo.toString());
         todoDb.save(todo);
+    }
+
+//    todoDb.exists()
+
+    @RequestMapping(value="/exists", method = RequestMethod.POST)
+    public @ResponseBody boolean exists(@RequestBody Todo todo){
+        System.out.println(todo.toString() + " GET TESTE " + todo.getId());
+        return todoDb.exists(todo.getId());
     }
 
 //    @RequestMapping(value = "/saveAll", method = RequestMethod.PATCH)

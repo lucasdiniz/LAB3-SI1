@@ -45,14 +45,43 @@ app.controller('todoController', function($scope, $rootScope, $http){
     });
 
     $scope.savePost = function (todo) {
+
         $http({
             method: 'POST',
-            url: '/todos/save',
+            url: '/todos/exists',
             data: todo
         }).then(function (data) {
-            console.log("foi!");
+            console.log("check se existe completo: " + data.data + " " +  todo.title);
+            return data.data;
+        }).then(function (_data) {
+            console.log(JSON.stringify(_data));
+            if(!_data){
+                console.log("Nao existe no DB, sera feito POST " + todo.title);
+
+                $http({
+                    method: 'POST',
+                    url: '/todos/save',
+                    data: todo
+                }).then(function (data) {
+                    console.log("foi FEITO POST! " + todo.title);
+                });
+
+            }
+            else{
+                console.log("Existe no DB, sera feito PATCH " + todo.title);
+
+                $http({
+                    method: 'PATCH',
+                    url: '/todos/save',
+                    data: todo
+                }).then(function (data) {
+                    console.log("foi FEITO PATCH! " + todo.title);
+                });
+            }
         });
+
     };
+
 
 
     $rootScope.$on("AddTask", function (event, data) {
