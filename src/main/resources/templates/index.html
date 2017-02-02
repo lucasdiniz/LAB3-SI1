@@ -16,7 +16,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-route.js"></script>
         <script src="app.js"></script>
         <script src="todoController.js"></script>
-        <script src="modalController.js"></script>
+        <script src="modalService.js"></script>
+        <script src="serverService.js"></script>
+        <script src="todoFactory.js"></script>
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
@@ -74,17 +76,16 @@
 
             <md-content>
 
-                <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos" data-ng-if="$index % 3 == 0">
+                <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos track by $index">
                     <div class="col-md-4">
-
                         <md-card>
                             <md-card-header>
 
                                 <md-card-header-text class="text-center col-md-10">
-                                    {{todos[$index].title}}
+                                    {{todo.title}}
                                 </md-card-header-text>
 
-                                <md-button class="md-primary md-warn" data-ng-click="removeTodo(todos[$index])">X</md-button>
+                                <md-button class="md-primary md-warn" data-ng-click="removeTodo(todo)">X</md-button>
 
                             </md-card-header>
 
@@ -92,24 +93,24 @@
                                 <div>
                                     <div class="row">
                                         <md-checkbox aria-label="Select All"
-                                                     data-ng-checked="allChecked(todos[$index])"
-                                                     md-indeterminate="isIndeterminated(todos[$index])"
-                                                     data-ng-click="toggleAll(todos[$index])">
-                                            <span data-ng-if="allChecked(todos[$index])">Un-</span>Select All
+                                                     data-ng-checked="allChecked(todo)"
+                                                     md-indeterminate="isIndeterminated(todo)"
+                                                     data-ng-click="toggleAll(todo)">
+                                            <span data-ng-if="allChecked(todo)">Un-</span>Select All
                                         </md-checkbox>
                                     </div>
                                     <div class="row"
-                                         data-ng-repeat="task in todos[$index].tasks"
+                                         data-ng-repeat="task in todo.tasks"
                                          layout="row"
                                          layout-align="space-around center">
 
                                         <div class="col-md-10">
-                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
+                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task, todo)">
                                                 {{ task.name }}
                                             </md-checkbox>
                                         </div>
                                         <div>
-                                            <md-button data-ng-click="removeTask(todos[$parent.$index], task)" aria-label="removeTask">
+                                            <md-button data-ng-click="removeTask(todo, task)" aria-label="removeTask">
                                                 <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
                                             </md-button>
                                         </div>
@@ -117,125 +118,15 @@
                                 </div>
                             </md-card-content>
 
-                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
-                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index])">Mudar título</md-button>
-                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index])">Add Task</md-button>
+                            <md-card-actions layout="row" layout-align="space-around center">
+                                <md-button class="md-primary md-raised" data-ng-click="changeTitleModal($event, todo)">Mudar título</md-button>
+                                <md-button class="md-primary md-raised" data-ng-click="addTaskModal($event, todo)">Add Task</md-button>
                             </md-card-actions>
 
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar"
                                      aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index])}}%">
-                                    {{percentageDone(todos[$index]).toFixed(2)}}%
-                                </div>
-                            </div>
-
-                        </md-card>
-
-                    </div>
-                    <div class="col-md-4" data-ng-if="todos.length > ($index + 1)">
-
-                        <md-card>
-                            <md-card-header>
-                                <md-card-header-text class="text-center col-md-10">
-                                    {{todos[$index + 1].title}}
-                                </md-card-header-text>
-
-                                <md-button class="md-primary md-warn" data-ng-click="removeTodo(todos[$index])">X</md-button>
-                            </md-card-header>
-
-                            <md-card-content>
-                                <div>
-                                    <div class="row">
-                                        <md-checkbox aria-label="Select All"
-                                                     data-ng-checked="allChecked(todos[$index + 1])"
-                                                     md-indeterminate="isIndeterminated(todos[$index + 1])"
-                                                     data-ng-click="toggleAll(todos[$index + 1])">
-                                            <span data-ng-if="allChecked(todos[$index + 1])">Un-</span>Select All
-                                        </md-checkbox>
-                                    </div>
-                                    <div class="row"
-                                         data-ng-repeat="task in todos[$index + 1].tasks"
-                                         layout="row"
-                                         layout-align="space-around center">
-
-                                        <div class="col-md-10">
-                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
-                                                {{ task.name }}
-                                            </md-checkbox>
-                                        </div>
-                                        <div>
-                                            <md-button data-ng-click="removeTask(todos[$parent.$index + 1], task)" aria-label="removeTask">
-                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </md-card-content>
-
-                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
-                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index + 1])">Mudar título</md-button>
-                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index + 1])">Add Task</md-button>
-                            </md-card-actions>
-
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index + 1])}}%">
-                                    {{percentageDone(todos[$index + 1]).toFixed(2)}}%
-                                </div>
-                            </div>
-
-                        </md-card>
-
-                    </div>
-                    <div class="col-md-4" data-ng-if="todos.length > ($index + 2)">
-
-                        <md-card>
-                            <md-card-header>
-                                <md-card-header-text class="text-center col-md-10">
-                                    {{todos[$index + 2].title}}
-                                </md-card-header-text>
-
-                                <md-button class="md-primary md-warn" data-ng-click="removeTodo(todos[$index])">X</md-button>
-                            </md-card-header>
-
-                            <md-card-content>
-                                <div>
-                                    <div class="row">
-                                        <md-checkbox aria-label="Select All"
-                                                     data-ng-checked="allChecked(todos[$index + 2])"
-                                                     md-indeterminate="isIndeterminated(todos[$index + 2])"
-                                                     data-ng-click="toggleAll(todos[$index + 2])">
-                                            <span data-ng-if="allChecked(todos[$index + 2])">Un-</span>Select All
-                                        </md-checkbox>
-                                    </div>
-                                    <div class="row"
-                                         data-ng-repeat="task in todos[$index + 2].tasks"
-                                         layout="row"
-                                         layout-align="space-around center">
-
-                                        <div class="col-md-10">
-                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task)">
-                                                {{ task.name }}
-                                            </md-checkbox>
-                                        </div>
-                                        <div>
-                                            <md-button data-ng-click="removeTask(todos[$parent.$index + 2], task)" aria-label="removeTask">
-                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </md-card-content>
-
-                            <md-card-actions data-ng-controller="modalController" layout="row" layout-align="space-around center">
-                                <md-button class="md-primary md-raised" data-ng-click="showPrompt($event, todos[$index + 2])">Mudar título</md-button>
-                                <md-button class="md-primary md-raised" data-ng-click="addTodoModal($event, todos[$index + 2])">Add Task</md-button>
-                            </md-card-actions>
-
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index + 2])}}%">
-                                    {{percentageDone(todos[$index + 2]).toFixed(2)}}%
+                                    {{percentageDone(todo).toFixed(2)}}%
                                 </div>
                             </div>
 

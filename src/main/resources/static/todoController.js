@@ -2,7 +2,8 @@
  * Created by lucasdiniz on 18/01/17.
  */
 
-app.controller('todoController', function($scope, $rootScope, $http){
+app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface', '_todoFactory', '_modalService',
+    function($scope, $rootScope, $http, dbInterface, _todoFactory, _modalService){
 
     var self = this;
 
@@ -11,85 +12,6 @@ app.controller('todoController', function($scope, $rootScope, $http){
         this.done = false;
     };
 
-    $scope.save = function(todo) {
-
-        $http({
-            method: 'PATCH',
-            url: '/todos/save',
-            data: todo
-        }).then(function (data) {
-            console.log("foi!");
-        });
-
-    };
-
-    $scope.saveAll = function(todos) {
-
-        $http({
-            method: 'PATCH',
-            url: '/todos/saveAll',
-            data: todos
-        }).then(function (data) {
-            console.log("foi!");
-        });
-
-    };
-
-    $rootScope.$on("saveAll", function (event, data) {
-        $scope.saveAll(data._todos);
-    });
-
-
-    $rootScope.$on("save", function (event, data) {
-        $scope.save(data._todo);
-    });
-
-    $scope.savePost = function (todo) {
-
-        $http({
-            method: 'POST',
-            url: '/todos/exists',
-            data: todo
-        }).then(function (data) {
-            console.log("check se existe completo: " + data.data + " " +  todo.title);
-            return data.data;
-        }).then(function (_data) {
-            console.log(JSON.stringify(_data));
-            if(!_data){
-                console.log("Nao existe no DB, sera feito POST " + todo.title);
-
-                $http({
-                    method: 'POST',
-                    url: '/todos/save',
-                    data: todo
-                }).then(function (data) {
-                    console.log("foi FEITO POST! " + todo.title);
-                });
-
-            }
-            else{
-                console.log("Existe no DB, sera feito PATCH " + todo.title);
-
-                $http({
-                    method: 'PATCH',
-                    url: '/todos/save',
-                    data: todo
-                }).then(function (data) {
-                    console.log("foi FEITO PATCH! " + todo.title);
-                });
-            }
-        });
-
-    };
-
-
-
-    $rootScope.$on("AddTask", function (event, data) {
-        data._todo.tasks.push(new self.taskObj(data._taskName));
-        console.log('new task added to ' + data._todo.title + " task name: " + data._taskName);
-
-        $scope.savePost(data._todo);
-    });
 
     $scope.allChecked = function(todo) {
         var allDone = true;
@@ -97,7 +19,6 @@ app.controller('todoController', function($scope, $rootScope, $http){
            if(!task.done) allDone = false;
         });
 
-        // $scope.save(todo);
         return allDone;
     };
 
@@ -108,13 +29,18 @@ app.controller('todoController', function($scope, $rootScope, $http){
     $scope.removeTask = function (todo, task) {
         var index = todo.tasks.indexOf(task);
         todo.tasks.splice(index, 1);
-        $scope.save(todo);
+
+        dbInterface.update(todo).then(function (data) {
+            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+        });
     };
 
 
-    $scope.toggle = function (task) {
+    $scope.toggle = function (todo, task) {
         task.done = !task.done;
-        // $scope.save(task);
+        dbInterface.update(todo).then(function (data) {
+            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+        });
     };
     
     $scope.isIndeterminated = function (todo) {
@@ -134,8 +60,32 @@ app.controller('todoController', function($scope, $rootScope, $http){
            task.done = newValue;
         });
 
-        $scope.save(todo);
+        dbInterface.update(todo).then(function (data) {
+            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+        });
     };
+
+    $scope.changeTitleModal = function(ev, todo) {
+
+        _modalService.changeTitleModal(ev).then(function (_data) {
+            todo.title = _data;
+            dbInterface.update(todo).then(function (data) {
+                todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+            })
+        });
+
+    };
+
+    $scope.addTaskModal = function (ev, todo) {
+        console.log(JSON.stringify(todo));
+        _modalService.addTaskModal(ev).then(function (data) {
+            todo.tasks.push({name: data, done: false});
+            dbInterface.update(todo).then(function (data) {
+                todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+            })
+        });
+    };
+
 
     $scope.percentageDone = function (todo) {
         var done = self.howManyDone(todo);
@@ -155,9 +105,4 @@ app.controller('todoController', function($scope, $rootScope, $http){
 
 
 
-});//.config(function($mdThemingProvider) {
-//     $mdThemingProvider.theme('dark-grey').backgroundPalette('grey').dark();
-//     $mdThemingProvider.theme('dark-orange').backgroundPalette('orange').dark();
-//     $mdThemingProvider.theme('dark-purple').backgroundPalette('deep-purple').dark();
-//     $mdThemingProvider.theme('dark-blue').backgroundPalette('blue').dark();
-// });
+}]);

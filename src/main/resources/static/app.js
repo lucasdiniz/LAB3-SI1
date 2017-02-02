@@ -1,9 +1,10 @@
 /**
  * Created by lucasdiniz on 17/01/17.
  */
-var app = angular.module('myApp', ['ngMaterial', 'ngMdIcons']);
+var app = angular.module('myApp', ['ngMaterial', 'ngMdIcons', 'serverService', 'todoFactory', 'modalService']);
 
-app.controller('indexController', function($scope, $http, $rootScope){
+app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface', '_todoFactory',
+    function($scope, $http, $rootScope, dbInterface, _todoFactory) {
 
     var self = this;
 
@@ -13,25 +14,24 @@ app.controller('indexController', function($scope, $http, $rootScope){
     $scope.todos = [];
 
     $scope.populate = function () {
-        $http({
-            method: 'GET',
-            url: '/todos/all'
-        }).then(function (_data) {
 
-            if(_data.data.length != 0) {
-                $scope.todos = _data.data;
+        $scope.todos = [];
+
+        dbInterface.getAll().then(function (_data) {
+            for (var i = 0; i < _data.data.length; i++) {
+                var newTodo = _todoFactory.create(JSON.parse(_data.data[i].data), _data.data[i].id);
+                $scope.todos.push(newTodo);
             }
-
-            console.log("View inicializada! " + JSON.stringify(_data));
         });
+
     };
 
     $scope.removeTodo = function (todo) {
         var index = $scope.todos.indexOf(todo);
-        $scope.todos.splice(index, 1);
+        var id = $scope.todos[index].id;
 
-        $rootScope.$broadcast("saveAll", {
-            _todo: todo
+        dbInterface.removeTodo(id).then(function () {
+            $scope.todos.splice(index, 1);
         });
 
     };
@@ -48,14 +48,16 @@ app.controller('indexController', function($scope, $http, $rootScope){
 
 
     $scope.addTodo = function(name){
+        var defaultTodo = _todoFactory.getDefault(name);
 
-        $scope.todos.push(new self.todoObj(name));
-        $scope.hideAddTodoBar = true;
-        self.clearInput();
-        $rootScope.$broadcast("save", {
-            _todo: $scope.todos[$scope.todos.length - 1]
+        dbInterface.create(defaultTodo).then(function (data) {
+            var newTodo = _todoFactory.create(JSON.parse(data.data.data), data.data.id);
+            $scope.todos.push(newTodo);
+            $scope.toggleAddTodoBar();
+            self.clearInput();
+
+            console.log(JSON.stringify(newTodo) + " CREATED");
         });
-
     };
 
 
@@ -64,23 +66,13 @@ app.controller('indexController', function($scope, $http, $rootScope){
     };
 
 
-    self.todoObj = function (name) {
-        this.title = "TODO List " + $scope.todos.length;
-        this.tasks = [new self.taskObj(name)];
-    };
-
-    self.taskObj = function (name) {
-        this.name = name;
-        this.done = false;
-    };
-
     self.clear = function (array) {
         while(array.length > 0){
             array.pop();
         }
     };
 
-}).config(function($mdThemingProvider) {
+}]).config(function($mdThemingProvider) {
     $mdThemingProvider.theme('dark-grey').backgroundPalette('grey').dark();
     $mdThemingProvider.theme('dark-orange').backgroundPalette('orange').dark();
     $mdThemingProvider.theme('dark-purple').backgroundPalette('deep-purple').dark();

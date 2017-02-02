@@ -14,57 +14,16 @@ import java.util.List;
 public class Todo {
 
     @Id
+    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+    private int id;
+//
     @Column
-    private String title;
+    private String data;
 
-    @Valid
-    @ElementCollection
-    @Column
-    @OneToMany(mappedBy = "taskOwner", fetch = FetchType.EAGER)
-    private List<Task> tasks = new ArrayList<>();
+    public Todo(){}
 
-    protected Todo() {
-    }
-
-    public Todo(String title, List<Task> tasks) {
-        this.tasks = new ArrayList<>(tasks);
-        this.title = title;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public List<Task> getTasks() {
-        return this.tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Todo[id=%d, Title='%s', Tasks='%s']",
-                id, title, tasks.toString());
-    }
+    public Todo(String data){this.data = data;}
 
     @Override
     public boolean equals(Object o) {
@@ -73,17 +32,24 @@ public class Todo {
 
         Todo todo = (Todo) o;
 
-        if (!id.equals(todo.id)) return false;
-        if (!title.equals(todo.title)) return false;
-        return tasks.equals(todo.tasks);
+        if (id != todo.id) return false;
+        return data.equals(todo.data);
 
     }
 
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + tasks.hashCode();
-        return result;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }

@@ -1,16 +1,9 @@
 package ufcg.si1.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ufcg.si1.entities.Task;
 import ufcg.si1.entities.Todo;
 import ufcg.si1.repository.TodoDB;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,43 +20,38 @@ public class TodoController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody List<Todo> getAll(){
         List<Todo> ans = todoDb.findAll();
-        System.out.println(ans);
+        for(Todo x : ans)
+        System.out.println("saiu do db " + x.getId());
         return ans;
     }
 
+    @RequestMapping(value = "/remove/{id}", method = RequestMethod.DELETE)
+    public void removeTodo(@PathVariable String id){
+        todoDb.delete(Integer.parseInt(id));
+    }
+
+
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void create(@RequestBody Todo todo){
-        System.out.println("chegou no POST do server: " + todo.getTitle());
-        System.out.println(todo.toString());
-//        for(Task t : todo.getTasks())
-            todoDb.save(todo);
+    public @ResponseBody Todo create(@RequestBody String todo){
+        System.out.println("chegou no POST do server: " + todo);
+
+        return todoDb.saveAndFlush(new Todo(todo));
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.PATCH)
-    public void update(@RequestBody Todo todo){
-        System.out.println("chegou no PATCH do server: " + todo.getTitle());
-        System.out.println(todo.toString());
-        todoDb.save(todo);
+    @RequestMapping(value = "/save/{id}", method = RequestMethod.PATCH)
+    public @ResponseBody Todo update(@RequestBody String todo, @PathVariable String id){
+        System.out.println("chegou no PATCH do server: " + todo);
+
+        Todo todoToPatch = todoDb.findOne(Integer.parseInt(id));
+        todoToPatch.setData(todo);
+        return todoDb.saveAndFlush(todoToPatch);
     }
 
-//    todoDb.exists()
 
-    @RequestMapping(value="/exists", method = RequestMethod.POST)
-    public @ResponseBody boolean exists(@RequestBody Todo todo){
-        System.out.println(todo.toString() + " GET TESTE " + todo.getId());
-        return todoDb.exists(todo.getId());
-    }
-
-//    @RequestMapping(value = "/saveAll", method = RequestMethod.PATCH)
-//    public void createTodos(@RequestBody List<Todo> todos){
-//        System.out.println("chegou aqui: " + todos.toString());
-//        todoDb.save(todos);
-//    }
-//
-//    @RequestMapping(value = "/saveAll", method = RequestMethod.POST)
-//    public void updateTodos(@RequestBody List<Todo> todos){
-//        System.out.println("chegou aqui: " + todos.toString());
-//        todoDb.save(todos);
+//    @RequestMapping(value="/exists", method = RequestMethod.POST)
+//    public @ResponseBody boolean exists(@RequestBody Todo todo){
+//        System.out.println(todo.toString() + " GET TESTE " + todo.getId());
+//        return todoDb.exists(todo.getId());
 //    }
 
 

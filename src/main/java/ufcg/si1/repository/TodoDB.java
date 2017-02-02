@@ -11,6 +11,6 @@ import ufcg.si1.entities.Todo;
  */
 
 @Repository
-public interface TodoDB extends JpaRepository<Todo, Integer>{
+    public interface TodoDB extends JpaRepository<Todo, Integer>{
 
 }
