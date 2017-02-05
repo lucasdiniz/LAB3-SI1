@@ -6,19 +6,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.css"/>
-        <link rel="stylesheet" href="mainStyle.css"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+        <link rel="stylesheet" href="/css/mainStyle.css"/>
 
 
-        <script src="https://use.fontawesome.com/592690451c.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-route.js"></script>
-        <script src="app.js"></script>
-        <script src="todoController.js"></script>
-        <script src="modalService.js"></script>
-        <script src="serverService.js"></script>
-        <script src="todoFactory.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/controller/todoController.js"></script>
+        <script src="/js/service/modalService.js"></script>
+        <script src="/js/service/serverService.js"></script>
+        <script src="/js/factory/todoFactory.js"></script>
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
@@ -31,110 +31,124 @@
         <!-- Angular Material Icons -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script>
 
+        <script type="text/javascript">
+            $(document).ready(function(e) {
+                var h = $('nav').height();
+                $('body').animate({ paddingTop: h });
+            });
+        </script>
 
     </head>
 
-    <body style="padding-top: 170px" data-ng-app="myApp" data-ng-controller="indexController" data-ng-init="populate()">
-        <nav class="navbar navbar-default navbar-fixed-top text-center">
+    <body data-ng-app="myApp" data-ng-controller="indexController" data-ng-init="populate()">
 
-            <h1>TODO List</h1>
-            <p>Estabeleça metas e se organize.</p>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <md-toolbar class="md-medium-tall" md-theme="dark-blue">
+            <md-content class="row text-center">
+                <p class="col-md-3 col-md-offset-1">TODO List</p>
 
-            <md-button data-ng-click="toggleAddTodoBar()">
-                <ng-md-icon icon="playlist_add" style="fill: aqua"></ng-md-icon>
-            </md-button>
+                <div class="col-md-4 col-md-offset-4">
 
-            <md-button data-ng-click="toggleSearchBar()">
-                <ng-md-icon icon="search" style="fill: aqua"></ng-md-icon>
-            </md-button>
+                    <md-button data-ng-click="addTodo()">
+                        <i class="material-icons">search</i>
+                    </md-button>
 
-            <form class="form-group" data-ng-hide="hideAddTodoBar">
-                <div layout="row" layout-align="space-around center">
-                    <div class="col-md-9">
-                        <input data-ng-model="newTodo" type="text" class="form-control" id="inputTodo" placeholder="Add a new TODO..."/>
-                    </div>
-                    <div>
-                        <md-button data-ng-click="addTodo(newTodo)" type="submit" class="md-primary md-raised">GO</md-button>
-                    </div>
+
+                    <md-button data-ng-click="addTodo()">
+                        <i class="material-icons">add_circle</i>
+                    </md-button>
+
+                    <md-button data-ng-click="addTodo()">
+                        <i class="material-icons">contact_mail</i>
+                    </md-button>
+
                 </div>
-            </form>
 
-            <form class="form-group" data-ng-hide="hideSearchBar">
-                <div layout="row" layout-align="space-around center">
-                    <div class="col-md-9">
-                        <input data-ng-model="searchString" type="text" class="form-control" id="inputSearch" placeholder="Search Anything..."/>
-                    </div>
-                    <div>
-                        <md-button data-ng-click="addTodo(newTodo)" type="submit" class="md-primary md-raised">GO</md-button>
-                    </div>
-                </div>
-            </form>
+            </md-content>
+        </md-toolbar>
+    </nav>
 
-        </nav>
 
-        <div class="container-fluid">
+    <div class="container container-full scroll-outer">
 
-            <md-content>
+            <!--<div class="scroll-inner">-->
 
-                <div flex="100" class='md-padding row' data-ng-controller="todoController" data-ng-repeat="todo in todos track by $index">
-                    <div class="col-md-4">
-                        <md-card>
-                            <md-card-header>
+                <div class="card-row scroll-outer" style="height: 50%" data-ng-controller="todoController" data-ng-repeat="todo in todos track by $index">
 
-                                <md-card-header-text class="text-center col-md-10">
-                                    {{todo.title}}
-                                </md-card-header-text>
+                    <div style="height: 85%; width: 85%;" class="relative-center">
+                    <md-card md-theme="dark-blue" class="scroll-outer relative-center" style="height: 100%">
+                        <md-card-header>
 
-                                <md-button class="md-primary md-warn" data-ng-click="removeTodo(todo)">X</md-button>
+                            <md-card-header-text class="text-center col-md-10">
+                                <h2>{{todo.title}}</h2>
+                            </md-card-header-text>
 
-                            </md-card-header>
+                            <md-button data-ng-click="removeTodo(todo)">
+                                <i class="material-icons">delete_sweep</i>
+                            </md-button>
 
-                            <md-card-content>
-                                <div>
-                                    <div class="row">
-                                        <md-checkbox aria-label="Select All"
-                                                     data-ng-checked="allChecked(todo)"
-                                                     md-indeterminate="isIndeterminated(todo)"
-                                                     data-ng-click="toggleAll(todo)">
-                                            <span data-ng-if="allChecked(todo)">Un-</span>Select All
-                                        </md-checkbox>
-                                    </div>
-                                    <div class="row"
-                                         data-ng-repeat="task in todo.tasks"
-                                         layout="row"
-                                         layout-align="space-around center">
+                        </md-card-header>
 
-                                        <div class="col-md-10">
-                                            <md-checkbox data-ng-checked="isChecked(task)" data-ng-click="toggle(task, todo)">
-                                                {{ task.name }}
-                                            </md-checkbox>
-                                        </div>
-                                        <div>
-                                            <md-button data-ng-click="removeTask(todo, task)" aria-label="removeTask">
-                                                <ng-md-icon icon="delete" style="fill: red" size="20"></ng-md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </md-card-content>
+                        <md-card-content class="scroll-inner" style="height: 70%">
 
-                            <md-card-actions layout="row" layout-align="space-around center">
-                                <md-button class="md-primary md-raised" data-ng-click="changeTitleModal($event, todo)">Mudar título</md-button>
-                                <md-button class="md-primary md-raised" data-ng-click="addTaskModal($event, todo)">Add Task</md-button>
-                            </md-card-actions>
-
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index])}}%">
-                                    {{percentageDone(todo).toFixed(2)}}%
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <md-checkbox aria-label="Select All"
+                                                 data-ng-checked="allChecked(todo)"
+                                                 md-indeterminate="isIndeterminated(todo)"
+                                                 data-ng-click="toggleAll(todo)">
+                                        <span data-ng-if="allChecked(todo)">Un-</span>Select All
+                                    </md-checkbox>
                                 </div>
                             </div>
+                            <div data-ng-repeat="task in todo.tasks">
 
-                        </md-card>
+                                <div class="row row-eq-height">
+                                    <div class="col-md-4 col-md-offset-2">
+                                        <md-checkbox class="absolute-center" data-ng-checked="isChecked(task)" data-ng-click="toggle(todo, task)">
+                                            {{ task.name }}
+                                        </md-checkbox>
+                                    </div>
+                                    <div class="col-md-4 col-md-offset-2">
+                                        <md-button class="absolute-center" data-ng-click="removeTask(todo, task)" aria-label="removeTask">
+                                            <i class="material-icons md-18">delete</i>
+                                        </md-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </md-card-content>
 
+                        <md-card-actions layout="row" layout-align="space-around center" style="position: relative">
+                            <md-button data-ng-click="changeTitleModal($event, todo)">
+                                <i class="material-icons">edit</i>
+                            </md-button>
+                            <md-button data-ng-click="addTaskModal($event, todo)">
+                                <i class="material-icons">assignment</i>
+                            </md-button>
+                        </md-card-actions>
+
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar"
+                                 aria-valuemin="0" aria-valuemax="100" style="width:{{percentageDone(todos[$index])}}%">
+                                {{percentageDone(todo).toFixed(2)}}%
+                            </div>
+                        </div>
+
+                    </md-card>
+                    </div>
+
+                </div>
+
+                <div class="row" data-ng-mouseenter="toggleNavMenu()">
+                    <div class="col-md-4 col-md-offset-4 text-center center-bottom">
+                        <ul class="pagination pagination-lg" data-ng-repeat="pageNumber in getPageNumbers()">
+                            <li data-ng-hide="!isHidden()">
+                                <a data-ng-click="changeTodosToPage(pageNumber)">{{pageNumber}}</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </md-content>
-        </div>
+            </div>
+        <!--</div>-->
     </body>
 </html>

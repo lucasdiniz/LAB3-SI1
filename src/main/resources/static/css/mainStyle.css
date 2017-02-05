@@ -13,8 +13,8 @@
  * Styles copied from the Grid example to make grid rows & columns visible.
  */
 .container {
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 0px;
+    padding-left: 0px;
 }
 
 h4 {
@@ -48,3 +48,53 @@ h4 {
 .bs-callout p:last-child {
     margin-bottom: 0;
 }
+
+.container-full {
+    margin: 0 auto;
+    width: 100%;
+    height: inherit;
+    position: relative;
+}
+
+.fixed{
+    position: fixed;
+    top: 0;
+}
+
+.fixed-lower-right{
+    position:absolute;
+    bottom:0;
+    right:0;
+}
+
+.card-row{
+    display: inline-block;
+    width: 50%;
+}
+
+.scroll-outer{
+    overflow: hidden;
+}
+
+.scroll-inner{
+    overflow-y: auto;
+}
+
+.absolute-center {
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.relative-center{
+    margin: auto;
+    position: center;
+    top: 0; left: 0; bottom: 0; right: 0;
+
+}
+
+.center-bottom {
+    position: fixed;
+    bottom: 0;
+}
+

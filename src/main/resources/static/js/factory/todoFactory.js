@@ -11,6 +11,12 @@ angular.module('todoFactory', [])
             this.id = uniqueId;
         };
 
+        var taskModel = function (name) {
+            this.name = name;
+            this.done = false;
+        };
+
+
         return {
 
             create : function (todoObject, uniqueId) {

@@ -3,22 +3,18 @@
  */
 
 
-angular.module('modalService', [])
+angular.module('modalService', ['ngMaterial', 'ngMdIcons'])
     .service('_modalService', ['$rootScope', '$mdDialog', function ($rootScope, $mdDialog) {
 
         return {
 
             changeTitleModal : function(ev) {
-                var confirm = $mdDialog.prompt()
-                    .title('Defina o novo título')
-                    .placeholder('Digite o título...')
-                    .ariaLabel('')
-                    .initialValue('TODO List')
-                    .targetEvent(ev)
-                    .ok('Confirmar')
-                    .cancel('Cancelar');
-
-                var promise = $mdDialog.show(confirm);
+                var promise = $mdDialog.show({
+                    templateUrl: '/modalTemplates/noteModal.tmpl.html',
+                    parent: angular.element(document.body),
+                    targetEvent: ev,
+                    clickOutsideToClose:true
+                });
                 return promise;
              },
 
@@ -37,4 +33,9 @@ angular.module('modalService', [])
             },
         }
 
-}]);
+}])
+    .controller('modalController', ['$scope', function ($scope) {
+
+
+
+    }]);
