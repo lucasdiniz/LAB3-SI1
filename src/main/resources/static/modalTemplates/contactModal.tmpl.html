@@ -1,0 +1,38 @@
+<md-dialog aria-label="Mango (Fruit)" data-ng-controller="modalController">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Informações de contato</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="close()">
+                    <i class="material-icons">close</i>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <h2>Lucas Diniz dos Santos</h2>
+                <h3>
+                    Email: lucazdinis@gmail.com
+                </h3>
+                <a href="https://github.com/lucasdiniz/LAB3-SI1">
+                    <h3>Link do repositório</h3>
+                </a>
+
+                <img style="margin: auto; max-width: 100%;" alt="lucas diniz" src="/img/lucas.jpg">
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button data-ng-click="close()">
+               OK
+            </md-button>
+            <md-button data-ng-click="close()">
+                Cancelar
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

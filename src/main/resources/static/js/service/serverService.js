@@ -2,11 +2,11 @@
  * Created by lucasdiniz on 01/02/17.
  */
 
-angular.module('serverService', [])
+angular.module('myApp')
     .service('dbInterface',['$http', function($http) {
       return {
 
-          getAll : function (todos) {
+          getAll : function () {
 
               var promise = $http({
                   method: 'GET',
@@ -18,10 +18,17 @@ angular.module('serverService', [])
 
 
           removeTodo : function (id) {
-              console.log("TESTE " + id);
               var promise = $http({
                   method: 'DELETE',
                   url: '/todos/remove/' + id,
+              });
+              return promise;
+          },
+
+          removeAll : function () {
+              var promise = $http({
+                  method: 'DELETE',
+                  url: '/todos/remove/'
               });
               return promise;
           },

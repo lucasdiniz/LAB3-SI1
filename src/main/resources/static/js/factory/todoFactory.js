@@ -2,13 +2,17 @@
  * Created by lucasdiniz on 02/02/17.
  */
 
-angular.module('todoFactory', [])
-    .factory('_todoFactory', function() {
+angular.module('myApp')
+    .factory('todoFactory', function() {
 
-        var todoModel = function (title, tasks, uniqueId) {
+        var todoModel = function (title, tasks, uniqueId, tags, priority, description, done) {
             this.title = title;
             this.tasks = tasks;
             this.id = uniqueId;
+            this.tags = tags;
+            this.priority = priority; //Alta, baixa ou normal
+            this.description = description;
+            this.done = done;
         };
 
         var taskModel = function (name) {
@@ -16,18 +20,43 @@ angular.module('todoFactory', [])
             this.done = false;
         };
 
+        var convert = function (data) {
+            return JSON.parse(data.data.data)
+        };
+
+        var getIdFromData = function (data) {
+          return data.data.id;
+        };
+
+        var extractJson = function (data) {
+            var json = JSON.parse(data.data);
+            var id = data.id;
+            return new todoModel(json.title, json.tasks, id, json.tags, json.priority, json.description, json.done);
+        };
+
 
         return {
 
-            create : function (todoObject, uniqueId) {
-                var newTodo = new todoModel(todoObject.title, todoObject.tasks, uniqueId);
+            create : function (data) {
+                var todoObject = convert(data);
+                var uniqueId = getIdFromData(data);
+                var newTodo = new todoModel(todoObject.title, todoObject.tasks, uniqueId, todoObject.tags, todoObject.priority, todoObject.description, todoObject.done);
                 return newTodo;
             },
 
             getDefault : function (name) {
-                var newTodo = new todoModel(name, [], 0);
+                var newTodo = new todoModel(name, [], 0, [], "", "", false);
                 return newTodo;
             },
+
+            createFromArray : function (data) {
+                var todos = [];
+                for (var i = 0; i < data.data.length; i++) {
+                    var newTodo = extractJson(data.data[i]);
+                    todos.push(newTodo);
+                }
+                return todos;
+            }
 
         }
     });

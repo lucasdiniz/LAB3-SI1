@@ -19,6 +19,9 @@
         <script src="/js/service/modalService.js"></script>
         <script src="/js/service/serverService.js"></script>
         <script src="/js/factory/todoFactory.js"></script>
+        <script src="/js/controller/modalController.js"></script>
+        <script src="/js/controller/searchMenuController.js"></script>
+        <script src="/js/service/searchService.js"></script>
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
@@ -34,56 +37,109 @@
         <script type="text/javascript">
             $(document).ready(function(e) {
                 var h = $('nav').height();
-                $('body').animate({ paddingTop: h });
+                $('body').animate({ paddingTop: h + 10});
+                $('#searchMenu').animate({paddingTop: h });
             });
         </script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('[data-toggle="tooltip"]').tooltip({delay:0 , trigger: "hover"});
+            });
+        </script>
+
 
     </head>
 
     <body data-ng-app="myApp" data-ng-controller="indexController" data-ng-init="populate()">
 
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <md-toolbar class="md-medium-tall" md-theme="dark-blue">
-            <md-content class="row text-center">
-                <p class="col-md-3 col-md-offset-1">TODO List</p>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <md-toolbar class="md-medium-tall" md-theme="dark-blue">
+                <md-content class="row text-center">
+                    <p class="col-md-2">TODO List</p>
 
-                <div class="col-md-4 col-md-offset-4">
+                    <div class="col-md-2">Total:{{getNumberOfTodos()}} / Feitas:{{calcHowManyDone()}}</div>
 
-                    <md-button data-ng-click="addTodo()">
-                        <i class="material-icons">search</i>
-                    </md-button>
+                    <div class="col-md-8">
+
+                        <md-button data-toggle="tooltip" data-placement="right" title="Marcar todas como feitas" data-ng-click="checkAll()">
+                            <i class="material-icons">thumb_up</i>
+                        </md-button>
+
+                        <md-button data-toggle="tooltip" data-placement="right" title="Deletar tudo" data-ng-click="deleteAll()">
+                            <i class="material-icons">thumb_down</i>
+                        </md-button>
+
+                        <md-button data-toggle="tooltip" data-placement="right" title="Buscar"
+                                   data-ng-hide="!showSearchIcon()" data-ng-click="toggleSearchMenu()"
+                                   data-ng-controller="searchMenuController">
+                            <i class="material-icons">search</i>
+                        </md-button>
+
+                        <md-button data-toggle="tooltip" data-placement="right" title="Resetar busca"
+                                   data-ng-hide="showSearchIcon()" data-ng-click="clearSearchCriteria()"
+                                   data-ng-controller="searchMenuController">
+                             <i class="material-icons">youtube_searched_for</i>
+                        </md-button>
 
 
-                    <md-button data-ng-click="addTodo()">
-                        <i class="material-icons">add_circle</i>
-                    </md-button>
+                        <md-button data-toggle="tooltip"
+                                   data-placement="right"
+                                   title="Criar TODO"
+                                   data-ng-click="addTodo($event)">
+                            <i class="material-icons">add_circle</i>
+                        </md-button>
 
-                    <md-button data-ng-click="addTodo()">
-                        <i class="material-icons">contact_mail</i>
-                    </md-button>
+                        <md-button data-toggle="tooltip" data-placement="right"
+                                   title="Contato"
+                                   data-ng-click="showContactInfoModal($event)">
+                            <i class="material-icons">contact_mail</i>
+                        </md-button>
 
-                </div>
+                    </div>
 
-            </md-content>
-        </md-toolbar>
-    </nav>
+                </md-content>
+            </md-toolbar>
+        </nav>
 
 
-    <div class="container container-full scroll-outer">
+        <div class="container container-full scroll-outer">
 
-            <!--<div class="scroll-inner">-->
+            <div class="card-row scroll-outer" style="height: 100%" data-ng-controller="todoController" data-ng-repeat="todo in todos track by $index">
 
-                <div class="card-row scroll-outer" style="height: 50%" data-ng-controller="todoController" data-ng-repeat="todo in todos track by $index">
-
-                    <div style="height: 85%; width: 85%;" class="relative-center">
+                <div style="height: 95%; width: 95%;" class="relative-center">
                     <md-card md-theme="dark-blue" class="scroll-outer relative-center" style="height: 100%">
-                        <md-card-header>
+                        <md-card-header layout="row" layout-align="space-around center">
 
-                            <md-card-header-text class="text-center col-md-10">
-                                <h2>{{todo.title}}</h2>
+                            <md-select data-ng-model="todo.priority" placeholder="Prioridade" data-ng-change="saveInDataBase(todo)">
+                                <md-option value="Alta"><em>Alta</em></md-option>
+                                <md-option value="Normal"><em>Normal</em></md-option>
+                                <md-option value="Baixa"><em>Baixa</em></md-option>
+                            </md-select>
+
+                            <md-card-header-text class="text-center" flex="90">
+                                <h2 data-ng-if="todo.priority == 'Baixa'" class="green" id="todoTitle1">
+                                    <del data-ng-if="allChecked(todo)">{{todo.title}}</del>
+                                    <div data-ng-if="!allChecked(todo)">{{todo.title}}</div>
+                                </h2>
+                                <h2 data-ng-if="todo.priority == 'Normal'" class="yellow" id="todoTitle2">
+                                    <del data-ng-if="allChecked(todo)">{{todo.title}}</del>
+                                    <div data-ng-if="!allChecked(todo)">{{todo.title}}</div>
+                                </h2>
+                                <h2 data-ng-if="todo.priority == 'Alta'" class="red" id="todoTitle3">
+                                    <del data-ng-if="allChecked(todo)">{{todo.title}}</del>
+                                    <div data-ng-if="!allChecked(todo)">{{todo.title}}</div>
+                                </h2>
+                                <h2 data-ng-if="todo.priority == ''" id="todoTitle4">
+                                    <del data-ng-if="allChecked(todo)">{{todo.title}}</del>
+                                    <div data-ng-if="!allChecked(todo)">{{todo.title}}</div>
+                                </h2>
                             </md-card-header-text>
 
-                            <md-button data-ng-click="removeTodo(todo)">
+                            <md-button onmouseenter="$(this).tooltip('show')"
+                                       data-placement="right"
+                                       title="Deletar TODO"
+                                       data-ng-click="removeTodo(todo)">
                                 <i class="material-icons">delete_sweep</i>
                             </md-button>
 
@@ -91,16 +147,12 @@
 
                         <md-card-content class="scroll-inner" style="height: 70%">
 
-                            <div class="row">
-                                <div class="col-md-10 col-md-offset-1">
-                                    <md-checkbox aria-label="Select All"
-                                                 data-ng-checked="allChecked(todo)"
-                                                 md-indeterminate="isIndeterminated(todo)"
-                                                 data-ng-click="toggleAll(todo)">
-                                        <span data-ng-if="allChecked(todo)">Un-</span>Select All
-                                    </md-checkbox>
-                                </div>
-                            </div>
+                            <md-input-container class="md-block" flex="100">
+                                <label>Descrição</label>
+                                <input data-md-maxlength="120" name="description" data-ng-model="todo.description" data-ng-change="saveInDataBase(todo)"/>
+                            </md-input-container>
+
+
                             <div data-ng-repeat="task in todo.tasks">
 
                                 <div class="row row-eq-height">
@@ -110,21 +162,49 @@
                                         </md-checkbox>
                                     </div>
                                     <div class="col-md-4 col-md-offset-2">
-                                        <md-button class="absolute-center" data-ng-click="removeTask(todo, task)" aria-label="removeTask">
+                                        <md-button class="absolute-center" data-ng-click="removeTask(todo, task)"
+                                                   onmouseenter="$(this).tooltip('show')"
+                                                   data-placement="right" title="Deletar sub-tarefa">
                                             <i class="material-icons md-18">delete</i>
                                         </md-button>
                                     </div>
                                 </div>
                             </div>
+
                         </md-card-content>
 
-                        <md-card-actions layout="row" layout-align="space-around center" style="position: relative">
-                            <md-button data-ng-click="changeTitleModal($event, todo)">
+                        <md-divider></md-divider>
+
+                        <md-chips data-ng-model="todo.tags" md-max-chips="3" placeholder="Tags..." data-ng-change="saveInDataBase(todo)"></md-chips>
+                        <br/>
+
+                        <md-card-actions layout="row"
+                                         layout-align="space-around center"
+                                         style="position: relative"
+                                         data-ng-controller="modalController">
+
+                            <md-button onmouseenter="$(this).tooltip('show')"
+                                       data-placement="top"
+                                       title="Editar Titulo"
+                                       data-ng-click="changeTitleModal($event, todo)">
                                 <i class="material-icons">edit</i>
                             </md-button>
-                            <md-button data-ng-click="addTaskModal($event, todo)">
+
+                            <md-button aria-label="Check all">
+
+                                <i title="Marcar todas" class="material-icons" data-ng-if="!allChecked(todo)" data-ng-click="toggleAll(todo)">
+                                    check_box
+                                </i>
+
+                                <i title="Desmarcar todas" class="material-icons" data-ng-if="allChecked(todo)" data-ng-click="toggleAll(todo)">
+                                    indeterminate_check_box
+                                </i>
+                            </md-button>
+
+                            <md-button onmouseenter="$(this).tooltip('show')" data-placement="top" title="Adicionar sub-tarefa" data-ng-click="addTaskModal($event, todo)">
                                 <i class="material-icons">assignment</i>
                             </md-button>
+
                         </md-card-actions>
 
                         <div class="progress">
@@ -135,20 +215,48 @@
                         </div>
 
                     </md-card>
-                    </div>
-
                 </div>
 
-                <div class="row" data-ng-mouseenter="toggleNavMenu()">
-                    <div class="col-md-4 col-md-offset-4 text-center center-bottom">
-                        <ul class="pagination pagination-lg" data-ng-repeat="pageNumber in getPageNumbers()">
-                            <li data-ng-hide="!isHidden()">
-                                <a data-ng-click="changeTodosToPage(pageNumber)">{{pageNumber}}</a>
-                            </li>
-                        </ul>
-                    </div>
+            </div>
+
+            <div class="row" data-ng-mouseenter="togglePaginationMenu()" data-ng-mouseleave="togglePaginationMenu()">
+                <div class="col-md-4 col-md-offset-4 text-center center-bottom">
+                    <ul class="pagination pagination-lg" data-ng-repeat="pageNumber in getPageNumbers()">
+                        <li data-ng-hide="!isPaginationMenuHidden()">
+                            <a data-ng-click="changeTodosToPage(pageNumber)">{{pageNumber}}</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        <!--</div>-->
+        </div>
+
+        <md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="searchMenu" id="searchMenu">
+            <md-toolbar class="md-theme-light">
+                <h1 class="md-toolbar-tools">Menu de Busca</h1>
+            </md-toolbar>
+            <md-content data-ng-controller="searchMenuController" layout-padding="" style="margin-top: 10%">
+                <form>
+                    <md-input-container>
+                        <md-select data-ng-model="choosenSearchCriteria" placeholder="Escolha o tipo de busca" data-ng-change="showSearchResult(choosenSearchCriteria)">
+                            <md-option value="searchByTag"><em>Buscar por Categoria</em></md-option>
+                            <md-option value="Alta"><em>Buscar por Prioridade Alta</em></md-option>
+                            <md-option value="Normal"><em>Buscar por Prioridade Normal</em></md-option>
+                            <md-option value="Baixa"><em>Buscar por Prioridade Baixa</em></md-option>
+                        </md-select>
+                    </md-input-container>
+                </form>
+
+                <md-input-container layout="row" data-ng-hide="!canShowTagSearchBar">
+                    <input type="text" data-ng-model="tagSearched" placeholder=" Categoria" flex="100"/>
+                </md-input-container>
+
+                <div layout="row" layout-align="center center" data-ng-hide="!canShowTagSearchBar">
+                    <md-button class="md-primary md-raised" data-ng-click="searchBy('tags', tagSearched)">GO</md-button>
+                </div>
+
+            </md-content>
+
+        </md-sidenav>
+
     </body>
 </html>

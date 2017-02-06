@@ -2,8 +2,8 @@
  * Created by lucasdiniz on 18/01/17.
  */
 
-app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface', '_todoFactory', '_modalService',
-    function($scope, $rootScope, $http, dbInterface, _todoFactory, _modalService){
+app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface', 'todoFactory',
+    function($scope, $rootScope, $http, dbInterface, todoFactory){
 
     var self = this;
 
@@ -15,6 +15,11 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
 
     $scope.allChecked = function(todo) {
         var allDone = true;
+
+        if(todo.tasks.length == 0){
+           return todo.done;
+        }
+
         todo.tasks.forEach(function (task) {
            if(!task.done) allDone = false;
         });
@@ -31,7 +36,7 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
         todo.tasks.splice(index, 1);
 
         dbInterface.update(todo).then(function (data) {
-            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+            todo = todoFactory.create(data);
         });
     };
 
@@ -39,7 +44,7 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
     $scope.toggle = function (todo, task) {
         task.done = !task.done;
         dbInterface.update(todo).then(function (data) {
-            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+            todo = todoFactory.create(data);
         });
     };
     
@@ -51,40 +56,26 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
 
     $scope.toggleAll = function (todo) {
 
-        var newValue = true;
+        if(todo.tasks.length == 0){
+            todo.done = !todo.done;
 
-        if($scope.allChecked(todo)) newValue = false;
-        else newValue = true;
+        } else {
 
-        todo.tasks.forEach(function (task) {
-           task.done = newValue;
-        });
+            var newValue = true;
+
+            if ($scope.allChecked(todo)) newValue = false;
+            else newValue = true;
+
+            todo.tasks.forEach(function (task) {
+                task.done = newValue;
+            });
+        }
 
         dbInterface.update(todo).then(function (data) {
-            todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
+            todo = todoFactory.create(data);
         });
     };
 
-    $scope.changeTitleModal = function(ev, todo) {
-
-        _modalService.changeTitleModal(ev).then(function (_data) {
-            todo.title = _data;
-            dbInterface.update(todo).then(function (data) {
-                todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
-            })
-        });
-
-    };
-
-    $scope.addTaskModal = function (ev, todo) {
-        console.log(JSON.stringify(todo));
-        _modalService.addTaskModal(ev).then(function (data) {
-            todo.tasks.push({name: data, done: false});
-            dbInterface.update(todo).then(function (data) {
-                todo = _todoFactory.create(JSON.parse(data.data.data), todo.id);
-            })
-        });
-    };
 
 
     $scope.percentageDone = function (todo) {
