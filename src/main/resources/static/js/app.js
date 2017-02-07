@@ -80,7 +80,8 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
     $scope.deleteAll = function () {
 
         dbInterface.removeAll().then(function () {
-           $scope.todos = [];
+            $scope.todos = [];
+            $scope.numberOfTodos = 0;
         });
 
     };
