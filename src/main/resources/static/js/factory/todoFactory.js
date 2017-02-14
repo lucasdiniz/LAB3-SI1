@@ -5,7 +5,7 @@
 angular.module('myApp')
     .factory('todoFactory', function() {
 
-        var todoModel = function (title, tasks, uniqueId, tags, priority, description, done) {
+        var todoModel = function (title, tasks, uniqueId, tags, priority, description, done, hidden) {
             this.title = title;
             this.tasks = tasks;
             this.id = uniqueId;
@@ -13,6 +13,7 @@ angular.module('myApp')
             this.priority = priority; //Alta, baixa ou normal
             this.description = description;
             this.done = done;
+            this.hidden = hidden;
         };
 
         var taskModel = function (name) {
@@ -40,12 +41,12 @@ angular.module('myApp')
             create : function (data) {
                 var todoObject = convert(data);
                 var uniqueId = getIdFromData(data);
-                var newTodo = new todoModel(todoObject.title, todoObject.tasks, uniqueId, todoObject.tags, todoObject.priority, todoObject.description, todoObject.done);
+                var newTodo = new todoModel(todoObject.title, todoObject.tasks, uniqueId, todoObject.tags, todoObject.priority, todoObject.description, todoObject.done, todoObject.hidden);
                 return newTodo;
             },
 
             getDefault : function (name) {
-                var newTodo = new todoModel(name, [], 0, [], "", "", false);
+                var newTodo = new todoModel(name, [], 0, [], "", "", false, true);
                 return newTodo;
             },
 

@@ -11,9 +11,7 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
     $scope.hideSearchBar = true;
     $scope.hideAddTodoBar = true;
     $scope.hideNavMenu = false;
-    $scope.numberOfTodos = 0;
     $scope.itensPerPage = 2;
-    $scope.isFiltered = false;
 
     $scope.todos = [];
 
@@ -24,7 +22,6 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
 
     $rootScope.$on("resetFilter", function (ev, data) {
         $scope.populate();
-        $scope.isFiltered = false;
     });
 
 
@@ -34,10 +31,8 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
 
         dbInterface.getAll().then(function (data) {
             $scope.todos = todoFactory.createFromArray(data);
-
             $scope.todos = searchService.filter($scope.todos);
-            $scope.numberOfTodos = $scope.todos.length;
-            $scope.isFiltered = true;
+            $scope.changeTodosToPage(0);
         });
 
     };
@@ -92,7 +87,7 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
 
         dbInterface.getAll().then(function (data) {
             $scope.todos = todoFactory.createFromArray(data);
-            $scope.numberOfTodos = $scope.todos.length;
+            $scope.changeTodosToPage(0);
         });
 
     };
@@ -103,7 +98,6 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
 
         dbInterface.removeTodo(id).then(function () {
             $scope.todos.splice(index, 1);
-            $scope.numberOfTodos -= 1;
         });
 
     };
@@ -118,7 +112,6 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
             dbInterface.create(defaultTodo).then(function (data) {
                 var newTodo = todoFactory.create(data);
                 $scope.todos.push(newTodo);
-                $scope.numberOfTodos += 1;
             });
 
         }).catch(function (error) {
@@ -138,7 +131,7 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
     $scope.getPageNumbers = function () {
         var numbers = [];
 
-        for(var i = 0 ; i < $scope.numberOfTodos ; i += $scope.itensPerPage){
+        for(var i = 0 ; i < $scope.todos.length ; i += $scope.itensPerPage){
             numbers.push(i/$scope.itensPerPage);
         }
 
@@ -146,20 +139,17 @@ app.controller('indexController', ['$scope', '$http', '$rootScope', 'dbInterface
     };
 
     $scope.changeTodosToPage = function (page) {
+        for(var i = 0 ; i < page * $scope.itensPerPage ; i++){
+            $scope.todos[i].hidden = false;
+        }
 
-        $scope.todos = [];
+        for(var i = page * $scope.itensPerPage ; i < $scope.todos.length; i++){
+            $scope.todos[i].hidden = true;
+        }
+    };
 
-        dbInterface.getAll().then(function (data) {
-            $scope.todos = todoFactory.createFromArray(data);
-
-            if($scope.isFiltered){
-                $scope.todos = searchService.filter($scope.todos);
-                $scope.numberOfTodos = $scope.todos.length;
-            }
-
-            $scope.todos.splice(0, page * $scope.itensPerPage);
-        });
-
+    $scope.isHidden = function (todo) {
+        return todo.hidden;
     };
 
     $scope.showContactInfoModal = function (ev) {

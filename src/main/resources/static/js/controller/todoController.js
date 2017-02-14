@@ -79,9 +79,16 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
 
 
     $scope.percentageDone = function (todo) {
+
+        if(todo.tasks.length == 0){
+            if(todo.done) return 100.00;
+            else return 0.00;
+        }
+
         var done = self.howManyDone(todo);
         if(todo.tasks.length === 0) return 100;
-        return (done * 100)/todo.tasks.length;
+        var result = (done * 100)/todo.tasks.length;
+        return result.toFixed(2);
 
     };
 
