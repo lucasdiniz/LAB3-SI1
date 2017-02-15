@@ -17,7 +17,7 @@ public class TodoController {
     @Autowired
     private TodoDB todoDb;
 
-    private final boolean DEBUG = false;
+    private final boolean DEBUG = true;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody List<Todo> getAll(){

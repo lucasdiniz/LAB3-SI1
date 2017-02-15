@@ -11,14 +11,15 @@ import java.util.List;
 
 
 @Entity
+@Table(name="todos")
 public class Todo {
 
     @Id
-    @Column
+    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 //
-    @Column(length = 5000)
+    @Column(name="data", length = 5000)
     private String data;
 
     public Todo(){}
