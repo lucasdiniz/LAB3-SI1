@@ -143,6 +143,13 @@
                                 <i class="material-icons">delete_sweep</i>
                             </md-button>
 
+                            <md-button onmouseenter="$(this).tooltip('show')"
+                                       data-placement="right"
+                                       title="Download TODO"
+                                       data-ng-click="download(todo.title, todo)">
+                                <i class="material-icons">delete_sweep</i>
+                            </md-button>
+
                         </md-card-header>
 
                         <md-card-content class="scroll-inner" style="height: 70%">

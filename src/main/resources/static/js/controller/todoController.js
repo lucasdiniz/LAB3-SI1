@@ -2,8 +2,8 @@
  * Created by lucasdiniz on 18/01/17.
  */
 
-app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface', 'todoFactory',
-    function($scope, $rootScope, $http, dbInterface, todoFactory){
+app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface', 'todoFactory', 'downloadService',
+    function($scope, $rootScope, $http, dbInterface, todoFactory, downloadService){
 
     var self = this;
 
@@ -90,6 +90,10 @@ app.controller('todoController', ['$scope', '$rootScope', '$http', 'dbInterface'
         var result = (done * 100)/todo.tasks.length;
         return result.toFixed(2);
 
+    };
+
+    $scope.download = function (filename, data) {
+        downloadService.download(filename, data);
     };
 
     self.howManyDone = function(todo) {
