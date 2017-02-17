@@ -7,8 +7,26 @@ angular.module('myApp')
 
         var self = this;
 
-        self.formatJson = function (data) {
-            return data;
+        self.formatJson = function (todo) {
+            var formattedData = "Titulo: ";
+            formattedData += todo.title + "\n";
+            formattedData += "Prioridade: " + todo.priority + "\n";
+            formattedData += "Descricao:\n\t" + todo.description + "\n";
+            formattedData += "Sub-tarefas:\n";
+
+            todo.tasks.forEach(function(task) {
+                formattedData += "\t*" + task.name + "   ";
+                if(task.done) formattedData += "Feita\n";
+                else formattedData += "Nao feita\n";
+            });
+
+            formattedData += "tags:\n";
+
+            todo.tags.forEach(function (tag) {
+                formattedData += "\t*" + tag + "\n";
+            });
+
+            return formattedData;
         };
 
         return {
